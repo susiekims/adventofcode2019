@@ -1,8 +1,8 @@
 const fs = require("fs");
 
-module.exports = filePath => {
+module.exports = (filePath, separator) => {
   return fs
     .readFileSync(filePath, "utf8")
-    .split("\n")
+    .split(separator)
     .map(item => parseInt(item));
 };
