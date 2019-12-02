@@ -30,7 +30,7 @@ const sumOfFuelRequirements = inputs.reduce((acc, curr) => {
   return acc + getFuelRequirements(curr);
 }, 0);
 
-console.log(sumOfFuelRequirements);
+console.log(sumOfFuelRequirements); // 3154112
 
 /* 
 --- Part Two ---
@@ -62,6 +62,6 @@ const sumOfAdditionalFuelRequirements = inputs.reduce((acc, curr) => {
   return acc + getAdditionalFuel(curr);
 }, 0);
 
-console.log(sumOfAdditionalFuelRequirements);
+console.log(sumOfAdditionalFuelRequirements); // 4728317
 
 module.exports = { getFuelRequirements, getAdditionalFuel };
