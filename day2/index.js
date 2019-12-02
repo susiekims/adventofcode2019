@@ -48,9 +48,6 @@ const inputs = getInputs("./input.txt", ",");
 inputs[1] = 12;
 inputs[2] = 2;
 
-//1, 0, 0, 0, 99
-// 2,3,0,3,99
-
 const runProgram = input => {
   for (let i = 0; i < input.length; i += 4) {
     const opcode = input[i];
