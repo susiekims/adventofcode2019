@@ -45,7 +45,7 @@ Once you have a working computer, the first step is to restore the gravity assis
 */
 
 const getInputs = require("../helpers/getInputs");
-const inputs = getInputs("./input.txt", ",");
+const inputs = getInputs("./input.txt", ",").map(item => parseInt(item));
 
 const runProgram = input => {
   for (let i = 0; i < input.length; i += 4) {

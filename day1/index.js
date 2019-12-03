@@ -1,5 +1,5 @@
 const getInputs = require("../helpers/getInputs");
-const inputs = getInputs("./input.txt", "\n");
+const inputs = getInputs("./input.txt", "\n").map(item => parseInt(item));
 
 /*
 --- Day 1: The Tyranny of the Rocket Equation ---
