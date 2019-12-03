@@ -89,9 +89,9 @@ const createMatrix = (width, height, filler) => {
 const drawLine = (matrix, input) => {
   let xPos = 0;
   let yPos = 0;
-  for (let i = 0; i < input.length; i++) {
-    let direction = input[i].charAt(0);
-    let steps = parseInt(input[i].substring(1));
+  input.forEach(item => {
+    let direction = item.charAt(0);
+    let steps = parseInt(item.substring(1));
 
     if (direction === "R") {
       matrix[yPos].fill(1, xPos, steps);
@@ -99,22 +99,29 @@ const drawLine = (matrix, input) => {
     }
 
     if (direction === "L") {
-      matrix[0].fill(2);
+      matrix[yPos].fill(1, xPos - steps, xPos);
       xPos -= steps;
     }
 
     if (direction === "U") {
-      for (i = yPos; i < yPos + steps + 1; i++) {
+      for (i = yPos; i <= yPos + steps; i++) {
         matrix[i][xPos] = 1;
       }
       yPos += steps;
     }
-  }
+
+    if (direction === "D") {
+      for (i = yPos; i >= yPos - steps; i--) {
+        matrix[i][xPos] = 1;
+      }
+      yPos -= steps;
+    }
+  });
 
   return matrix;
 };
 
-console.log(drawLine(createMatrix(5, 5, 0), ["R3", "U2", "L2", "L4"]));
+console.log(drawLine(createMatrix(5, 5, 0), ["R3", "U3", "L2", "D1"]));
 
 module.exports = {
   getMatrixDimensions
