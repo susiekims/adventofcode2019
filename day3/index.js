@@ -46,10 +46,8 @@ const getInputs = require("../helpers/getInputs");
 
 const inputs = getInputs("./input.txt", "\n").map(item => item.split(","));
 
-// const line1 = inputs[0];
-// const line2 = inputs[1];
-const line1 = ["R8", "U5", "L5", "D3"];
-const line2 = ["U7", "R6", "D4", "L4"];
+const line1 = inputs[0];
+const line2 = inputs[1];
 
 const getPath = input => {
   let xPos = 0;
@@ -60,35 +58,28 @@ const getPath = input => {
     let steps = parseInt(input[j].substring(1));
 
     if (direction === "R") {
-      // coordinates.push(direction);
-      for (let i = xPos + 1; i < steps + xPos; i++) {
+      for (let i = xPos; i < steps + xPos; i++) {
         coordinates.push(`${i},${yPos}`);
       }
       xPos += steps;
     }
 
     if (direction === "L") {
-      // coordinates.push(direction);
-
-      for (let i = xPos - 1; i > xPos - steps; i--) {
+      for (let i = xPos; i > xPos - steps; i--) {
         coordinates.push(`${i},${yPos}`);
       }
       xPos -= steps;
     }
 
     if (direction === "U") {
-      // coordinates.push(direction);
-
-      for (let i = yPos + 1; i < yPos + steps; i++) {
+      for (let i = yPos; i < yPos + steps; i++) {
         coordinates.push(`${xPos},${i}`);
       }
       yPos += steps;
     }
 
     if (direction === "D") {
-      // coordinates.push(direction);
-
-      for (let i = yPos - 1; i > yPos - steps; i--) {
+      for (let i = yPos; i > yPos - steps; i--) {
         coordinates.push(`${xPos},${i}`);
       }
       yPos -= steps;
@@ -109,4 +100,72 @@ const comparePaths = (line1, line2) => {
   return Math.min(...distances);
 };
 
-console.log(comparePaths(getPath(line1), getPath(line2)));
+// console.log(comparePaths(getPath(line1), getPath(line2))); // 896
+
+/* 
+--- Part Two ---
+It turns out that this circuit is very timing-sensitive; you actually need to minimize the signal delay.
+
+To do this, calculate the number of steps each wire takes to reach each intersection; choose the intersection where the sum of both wires' steps is lowest. If a wire visits a position on the grid multiple times, use the steps value from the first time it visits that position when calculating the total value of a specific intersection.
+
+The number of steps a wire takes is the total number of grid squares the wire has entered to get to that location, including the intersection being considered. Again consider the example from above:
+
+...........
+.+-----+...
+.|.....|...
+.|..+--X-+.
+.|..|..|.|.
+.|.-X--+.|.
+.|..|....|.
+.|.......|.
+.o-------+.
+...........
+In the above example, the intersection closest to the central port is reached after 8+5+5+2 = 20 steps by the first wire and 7+6+4+3 = 20 steps by the second wire for a total of 20+20 = 40 steps.
+
+However, the top-right intersection is better: the first wire takes only 8+5+2 = 15 and the second wire takes only 7+6+2 = 15, a total of 15+15 = 30 steps.
+
+Here are the best steps for the extra examples from above:
+
+R75,D30,R83,U83,L12,D49,R71,U7,L72
+U62,R66,U55,R34,D71,R55,D58,R83 = 610 steps
+R98,U47,R26,D63,R33,U87,L62,D20,R33,U53,R51
+U98,R91,D20,R16,D67,R40,U7,R15,U6,R7 = 410 steps
+What is the fewest combined steps the wires must take to reach an intersection?
+*/
+line3 = ["R75", "D30", "R83", "U83", "L12", "D49", "R71", "U7", "L72"];
+line4 = ["U62", "R66", "U55", "R34", "D71", "R55", "D58", "R83"];
+
+line5 = ["R8", "U5", "L5", "D3"];
+line6 = ["U7", "R6", "D4", "L4"];
+
+line7 = [
+  "R98",
+  "U47",
+  "R26",
+  "D63",
+  "R33",
+  "U87",
+  "L62",
+  "D20",
+  "R33",
+  "U53",
+  "R51"
+];
+line8 = ["U98", "R91", "D20", "R16", "D67", "R40", "U7", "R15", "U6", "R7"];
+const getShortestSteps = (line1, line2) => {
+  // console.log(line1, line2);
+  let a = new Set(line1);
+  let b = new Set(line2);
+  let intersections = [...a].filter(x => b.has(x));
+
+  intersections = intersections.slice(1, intersections.length);
+  console.log(intersections);
+
+  let steps = intersections.map(item => {
+    // console.log(item, line1.indexOf(item), line2.indexOf(item));
+    return line1.indexOf(item) + line2.indexOf(item);
+  });
+  return Math.min(...steps);
+};
+
+console.log(getShortestSteps(getPath(line1), getPath(line2)));
