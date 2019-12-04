@@ -46,83 +46,67 @@ const getInputs = require("../helpers/getInputs");
 
 const inputs = getInputs("./input.txt", "\n").map(item => item.split(","));
 
-const line1 = inputs[0];
-const line2 = inputs[1];
+// const line1 = inputs[0];
+// const line2 = inputs[1];
+const line1 = ["R8", "U5", "L5", "D3"];
+const line2 = ["U7", "R6", "D4", "L4"];
 
-const matrix = [];
-
-const getMatrixDimensions = line => {
-  let width = 0;
-  let height = 0;
-
-  for (i = 0; i < line.length; i++) {
-    let direction = line[i].charAt(0);
-    let value = parseInt(line[i].substring(1));
-
-    if (direction === "R") {
-      width += value;
-    }
-
-    if (direction === "L") {
-      width -= value;
-    }
-
-    if (direction === "U") {
-      height += value;
-    }
-
-    if (direction === "D") {
-      height -= value;
-    }
-  }
-
-  return [width, height];
-};
-
-const createMatrix = (width, height, filler) => {
-  let matrix = new Array(height)
-    .fill()
-    .map(() => new Array(width).fill(filler)); // create empty n x n array
-  return matrix;
-};
-
-const drawLine = (matrix, input) => {
+const getPath = input => {
   let xPos = 0;
   let yPos = 0;
-  input.forEach(item => {
-    let direction = item.charAt(0);
-    let steps = parseInt(item.substring(1));
+  let coordinates = [];
+  for (let j = 0; j < input.length; j++) {
+    let direction = input[j].charAt(0);
+    let steps = parseInt(input[j].substring(1));
 
     if (direction === "R") {
-      matrix[yPos].fill(1, xPos, steps);
+      // coordinates.push(direction);
+      for (let i = xPos + 1; i < steps + xPos; i++) {
+        coordinates.push(`${i},${yPos}`);
+      }
       xPos += steps;
     }
 
     if (direction === "L") {
-      matrix[yPos].fill(1, xPos - steps, xPos);
+      // coordinates.push(direction);
+
+      for (let i = xPos - 1; i > xPos - steps; i--) {
+        coordinates.push(`${i},${yPos}`);
+      }
       xPos -= steps;
     }
 
     if (direction === "U") {
-      for (i = yPos; i <= yPos + steps; i++) {
-        matrix[i][xPos] = 1;
+      // coordinates.push(direction);
+
+      for (let i = yPos + 1; i < yPos + steps; i++) {
+        coordinates.push(`${xPos},${i}`);
       }
       yPos += steps;
     }
 
     if (direction === "D") {
-      for (i = yPos; i >= yPos - steps; i--) {
-        matrix[i][xPos] = 1;
+      // coordinates.push(direction);
+
+      for (let i = yPos - 1; i > yPos - steps; i--) {
+        coordinates.push(`${xPos},${i}`);
       }
       yPos -= steps;
     }
+  }
+  return coordinates;
+};
+
+const comparePaths = (line1, line2) => {
+  let a = new Set(line1);
+  let b = new Set(line2);
+  let intersections = [...a].filter(x => b.has(x));
+
+  const distances = intersections.map(intersection => {
+    intersection = intersection.split(",");
+    return Math.abs(intersection[0]) + Math.abs(intersection[1]);
   });
-
-  return matrix;
+  return Math.min(...distances);
 };
 
-console.log(drawLine(createMatrix(5, 5, 0), ["R3", "U3", "L2", "D1"]));
-
-module.exports = {
-  getMatrixDimensions
-};
+console.log(comparePaths(getPath(line1), getPath(line2)));
