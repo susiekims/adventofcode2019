@@ -100,7 +100,7 @@ const comparePaths = (line1, line2) => {
   return Math.min(...distances);
 };
 
-// console.log(comparePaths(getPath(line1), getPath(line2))); // 896
+console.log(comparePaths(getPath(line1), getPath(line2))); // 896
 
 /* 
 --- Part Two ---
@@ -153,7 +153,6 @@ line7 = [
 ];
 line8 = ["U98", "R91", "D20", "R16", "D67", "R40", "U7", "R15", "U6", "R7"];
 const getShortestSteps = (line1, line2) => {
-  // console.log(line1, line2);
   let a = new Set(line1);
   let b = new Set(line2);
   let intersections = [...a].filter(x => b.has(x));
@@ -162,7 +161,6 @@ const getShortestSteps = (line1, line2) => {
   console.log(intersections);
 
   let steps = intersections.map(item => {
-    // console.log(item, line1.indexOf(item), line2.indexOf(item));
     return line1.indexOf(item) + line2.indexOf(item);
   });
   return Math.min(...steps);
