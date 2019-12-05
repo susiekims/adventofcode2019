@@ -93,6 +93,7 @@ const comparePaths = (line1, line2) => {
   let b = new Set(line2);
   let intersections = [...a].filter(x => b.has(x));
 
+  intersections = intersections.splice(1, intersections.length);
   const distances = intersections.map(intersection => {
     intersection = intersection.split(",");
     return Math.abs(intersection[0]) + Math.abs(intersection[1]);
@@ -132,33 +133,13 @@ R98,U47,R26,D63,R33,U87,L62,D20,R33,U53,R51
 U98,R91,D20,R16,D67,R40,U7,R15,U6,R7 = 410 steps
 What is the fewest combined steps the wires must take to reach an intersection?
 */
-line3 = ["R75", "D30", "R83", "U83", "L12", "D49", "R71", "U7", "L72"];
-line4 = ["U62", "R66", "U55", "R34", "D71", "R55", "D58", "R83"];
 
-line5 = ["R8", "U5", "L5", "D3"];
-line6 = ["U7", "R6", "D4", "L4"];
-
-line7 = [
-  "R98",
-  "U47",
-  "R26",
-  "D63",
-  "R33",
-  "U87",
-  "L62",
-  "D20",
-  "R33",
-  "U53",
-  "R51"
-];
-line8 = ["U98", "R91", "D20", "R16", "D67", "R40", "U7", "R15", "U6", "R7"];
 const getShortestSteps = (line1, line2) => {
   let a = new Set(line1);
   let b = new Set(line2);
   let intersections = [...a].filter(x => b.has(x));
 
   intersections = intersections.slice(1, intersections.length);
-  console.log(intersections);
 
   let steps = intersections.map(item => {
     return line1.indexOf(item) + line2.indexOf(item);
@@ -166,4 +147,6 @@ const getShortestSteps = (line1, line2) => {
   return Math.min(...steps);
 };
 
-console.log(getShortestSteps(getPath(line1), getPath(line2)));
+console.log(getShortestSteps(getPath(line1), getPath(line2))); // 16524
+
+module.exports = { getPath, getShortestSteps, comparePaths };

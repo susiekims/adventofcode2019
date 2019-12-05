@@ -99,6 +99,6 @@ const checkNumber2 = number => {
   return isValid && hasDouble;
 };
 
-console.log(countPasswords(197487, 673251, checkNumber2));
+console.log(countPasswords(197487, 673251, checkNumber2)); // 1126
 
 module.exports = { checkNumber, checkNumber2 };
