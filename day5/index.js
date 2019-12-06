@@ -53,15 +53,52 @@ const getInputs = require("../helpers/getInputs");
 
 const inputs = getInputs("./input.txt", ",").map(Number);
 
+const getOpcode = number => (number === 99 ? 99 : number % 10);
+
+const getModes = number => {
+  const modes = Math.floor(number / 100)
+    .toString()
+    .split("")
+    .map(Number)
+    .reverse();
+
+  if (modes.length === 1) {
+    modes.push(0);
+  }
+
+  return modes;
+};
+
 const runTEST = (program, input) => {
   let i = 0;
-  console.log(input);
-  while (i <= program.length) {
-    const opcode = program[i];
-    const val1 = program[program[i + 1]];
-    const val2 = program[program[i + 2]];
+  while (i < program.length) {
+    const opcode = getOpcode(program[i]);
+    const modes = getModes(program[i]);
+    let val1;
+    let val2;
+    let position;
+
+    if (opcode === 1 || opcode === 2) {
+      if (modes[0] === 0) {
+        val1 = program[program[i + 1]];
+      } else {
+        val1 = program[i + 1];
+      }
+
+      if (modes[1] === 0) {
+        val2 = program[program[i + 2]];
+      } else {
+        val2 = program[i + 2];
+      }
+
+      if (modes[2] === 0) {
+        post = program[program[i + 3]];
+      } else {
+        position = program[i + 3];
+      }
+    }
+
     const param = program[i + 1];
-    const position = program[i + 3];
 
     if (opcode === 99) return program;
 
@@ -76,7 +113,6 @@ const runTEST = (program, input) => {
     }
 
     if (opcode === 3) {
-      console.log(val1);
       program[param] = input;
       i += 2;
     }
@@ -90,4 +126,5 @@ const runTEST = (program, input) => {
   return program;
 };
 
-module.exports = runTEST;
+console.log(runTEST(inputs, 1));
+module.exports = { runTEST, getOpcode, getModes };
