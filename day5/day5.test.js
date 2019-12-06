@@ -1,10 +1,4 @@
-const { getOpcode, runTEST, getMode } = require("./index");
-
-describe("TEST", () => {
-  test("it should return 2", () => {
-    expect(runTEST([3, 0, 4, 0, 99], 2)[0]).toBe(2);
-  });
-});
+const { getOpcode, getModes } = require("./index");
 
 describe("getOpcode", () => {
   test("it should return 2", () => {
@@ -20,16 +14,12 @@ describe("getOpcode", () => {
   });
 });
 
-describe("getMode", () => {
-  test("it should return 10", () => {
-    expect(getMode(1002)).toBe(10);
+describe("getModes", () => {
+  test("it should return 0 1 0", () => {
+    expect(getModes(1002)).toStrictEqual([0, 1, 0]);
   });
 
-  test("it should return 100", () => {
-    expect(getMode(10003)).toBe(100);
-  });
-
-  test("it should return 2", () => {
-    expect(getMode(204)).toBe(2);
+  test("it should return 2 2 2", () => {
+    expect(getModes(22203)).toStrictEqual([2, 2, 2]);
   });
 });
