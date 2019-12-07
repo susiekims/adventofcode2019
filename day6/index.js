@@ -32,6 +32,20 @@ D)I
 E)J
 J)K
 K)L
+
+B: ["COM"],
+C: ["B", "COM"],
+D: ["C", "B", "COM"],
+E: ["D", "C", "B", "COM"],
+F: ["E", "D", "C", "B", "COM"],
+G: ["B", "COM"],
+H: ["G", "B", "COM"],
+I: ["D", "C", "B", "COM"],
+J: ["E", "D", "C", "B", "COM"],
+K: ["J", "E", "D", "C", "B", "COM"],
+L: ["K", "J", "E", "D", "C", "B", "COM"]
+
+
 Visually, the above map of orbits looks like this:
 
         G - H       J - K - L
@@ -53,46 +67,35 @@ What is the total number of direct and indirect orbits in your map data?
 
 const getInputs = require("../helpers/getInputs");
 
-const inputs = getInputs("./input.txt", "\n").map(orbit => orbit.split(")"));
-
-const getTotalCount = counts => {
-  return Object.values(counts).reduce((acc, curr) => acc.concat(curr)).length;
-};
+const inputs = getInputs("./input.txt", "\n").map(input => input.split(")"));
 
 const countOrbits = orbits => {
-  const counts = orbits.reduce((acc, curr) => {
-    const orbit = curr[0];
-    const object = curr[1];
-    if (acc[orbit]) {
-      acc[orbit].push(object);
+  let orbitsCount = 0;
+  let start = "COM";
+
+  const map = orbits.reduce((acc, curr) => {
+    let [parent, child] = curr;
+    if (acc[parent]) {
+      acc[parent] = [...acc[parent], child];
     } else {
-      acc[orbit] = [object];
+      acc[parent] = [child];
     }
     return acc;
   }, {});
 
-  return counts;
+  const countNodes = (node, level) => {
+    orbitsCount += level;
+    let children = map[node];
+
+    if (children) {
+      children.forEach(child => countNodes(child, level + 1));
+    }
+  };
+  countNodes(start, 0);
+
+  return orbitsCount;
 };
 
-console.log(
-  getTotalCount({
-    B: ["COM"],
-    C: ["B", "COM"],
-    D: ["C", "B", "COM"],
-    E: ["D", "C", "B", "COM"],
-    F: ["E", "D", "C", "B", "COM"],
-    G: ["B", "COM"],
-    H: ["G", "B", "COM"],
-    I: ["D", "C", "B", "COM"],
-    J: ["E", "D", "C", "B", "COM"],
-    K: ["J", "E", "D", "C", "B", "COM"],
-    L: ["K", "J", "E", "D", "C", "B", "COM"]
-  })
-);
+console.log(countOrbits(inputs));
 
 module.exports = countOrbits;
-
-/*
-
-
-*/
