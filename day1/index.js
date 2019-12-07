@@ -47,15 +47,15 @@ What is the sum of the fuel requirements for all of the modules on your spacecra
 */
 
 const getAdditionalFuel = mass => {
-  const masses = [];
+  let totalMass = 0;
   let fuel = getFuelRequirements(mass);
-  masses.push(fuel);
+  totalMass += fuel;
 
   while (getFuelRequirements(fuel) > 0) {
     fuel = getFuelRequirements(fuel);
-    masses.push(fuel);
+    totalMass += fuel;
   }
-  return masses.reduce((acc, curr) => acc + curr);
+  return totalMass;
 };
 
 const sumOfAdditionalFuelRequirements = inputs.reduce((acc, curr) => {
