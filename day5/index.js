@@ -165,7 +165,7 @@ What is the diagnostic code for system ID 5?
 
 */
 
-const runTEST2 = (program, input) => {
+const runTEST2 = (program, input = []) => {
   let i = 0;
   while (i < program.length) {
     const opcode = getOpcode(program[i]);
@@ -185,7 +185,7 @@ const runTEST2 = (program, input) => {
         i += 4;
         break;
       case 3:
-        program[param] = input;
+        program[param] = input.shift();
         i += 2;
         break;
       case 4:
@@ -207,13 +207,13 @@ const runTEST2 = (program, input) => {
         i += 4;
         break;
       default:
-        return program;
+        return program[0];
     }
   }
 
-  return program;
+  return program[0];
 };
-console.log(getModes(1002));
+// console.log(getModes(1002));
 // console.log(runTEST2(inputs, 5)[0]); // 7408802
 
-module.exports = { runTEST, getOpcode, getModes };
+module.exports = { runTEST, runTEST2, getOpcode, getModes };

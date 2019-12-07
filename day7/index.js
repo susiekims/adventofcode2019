@@ -41,3 +41,56 @@ Max thruster signal 65210 (from phase setting sequence 1,0,4,3,2):
 Try every combination of phase settings on the amplifiers. What is the highest signal that can be sent to the thrusters?
 
 */
+
+const { runTEST2 } = require("../day5/index");
+
+const permute = (nums, set = [], answers = []) => {
+  if (!nums.length) answers.push([...set]);
+
+  for (let i = 0; i < nums.length; i++) {
+    let newNums = nums.filter((_, index) => index !== i);
+    set.push(nums[i]);
+    permute(newNums, set, answers);
+    set.pop();
+  }
+  return answers;
+};
+
+const getMaxSignal = (permutations, program) => {
+  const outputs = [];
+  for (let i = 0; i < permutations.length; i++) {
+    console.log([permutations[i][0], 0]);
+    const a = runTEST2(program, [permutations[i][0], 0]);
+    console.log([permutations[i][1], a]);
+    const b = runTEST2(program, [permutations[i][0], a]);
+    const c = runTEST2(program, [permutations[i][0], b]);
+    const d = runTEST2(program, [permutations[i][0], c]);
+    const e = runTEST2(program, [permutations[i][0], d]);
+    outputs.push(e);
+  }
+  return outputs;
+};
+
+const testInput = [
+  3,
+  15,
+  3,
+  16,
+  1002,
+  16,
+  10,
+  16,
+  1,
+  16,
+  15,
+  15,
+  4,
+  15,
+  99,
+  0,
+  0
+];
+
+const permutations = permute([0, 1, 2, 3, 4]);
+console.log(getMaxSignal(permutations, testInput));
+module.exports = { permute, getMaxSignal };
