@@ -214,6 +214,6 @@ const Intcode = (program, input = []) => {
   return program[0];
 };
 
-console.log(runTEST2(inputs, [5])); // 7408802
+// console.log(Intcode(inputs, [5])); // 7408802
 
 module.exports = { Intcode, runTEST, getOpcode, getModes };
