@@ -123,7 +123,7 @@ const runTEST = (program, input) => {
   return program;
 };
 
-//console.log(runTEST(inputs, 1)[0]); // 5044655
+// console.log(runTEST(inputs, 1)[0]); // 5044655
 
 /* 
 
@@ -165,7 +165,7 @@ What is the diagnostic code for system ID 5?
 
 */
 
-const runTEST2 = (program, input = []) => {
+const Intcode = (program, input = []) => {
   let i = 0;
   while (i < program.length) {
     const opcode = getOpcode(program[i]);
@@ -173,7 +173,7 @@ const runTEST2 = (program, input = []) => {
     const param = program[i + 1];
     const val1 = modes[0] === 0 ? program[program[i + 1]] : program[i + 1];
     const val2 = modes[1] === 0 ? program[program[i + 2]] : program[i + 2];
-    const val3 = modes[2] === 0 ? program[program[i + 3]] : program[i + 3];
+    const val3 = program[i + 3];
 
     switch (opcode) {
       case 1:
@@ -213,7 +213,7 @@ const runTEST2 = (program, input = []) => {
 
   return program[0];
 };
-// console.log(getModes(1002));
-// console.log(runTEST2(inputs, 5)[0]); // 7408802
 
-module.exports = { runTEST, runTEST2, getOpcode, getModes };
+console.log(runTEST2(inputs, [5])); // 7408802
+
+module.exports = { Intcode, runTEST, getOpcode, getModes };

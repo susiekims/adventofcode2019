@@ -70,7 +70,7 @@ const runProgram = input => {
 
 // inputs[1] = 12;
 // inputs[2] = 2;
-// console.log(runProgram(inputs)[0]); // 5110675
+//console.log(runProgram(inputs)[0]); // 5110675
 
 /* --- Part Two ---
 "Good, the new computer seems to be working correctly! Keep it nearby during this mission - you'll probably use it again. Real Intcode computers support many more features than your new one, but we'll let you know what they are as you need them."

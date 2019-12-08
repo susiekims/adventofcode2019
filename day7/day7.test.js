@@ -22,7 +22,6 @@ const testInput = [
 
 describe("get max signal", () => {
   test("it should return 43210", () => {
-    const permutations = permute([0, 1, 2, 3, 4]);
-    expect(getMaxSignal(permutations, testInput)).toBe(43210);
+    expect(getMaxSignal(testInput)).toBe(43210);
   });
 });

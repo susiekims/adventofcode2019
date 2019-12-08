@@ -41,8 +41,9 @@ Max thruster signal 65210 (from phase setting sequence 1,0,4,3,2):
 Try every combination of phase settings on the amplifiers. What is the highest signal that can be sent to the thrusters?
 
 */
-
-const { runTEST2 } = require("../day5/index");
+const getInputs = require("../helpers/getInputs");
+const inputs = getInputs("./input.txt", ",").map(Number);
+const { Intcode } = require("../day5/index");
 
 const permute = (nums, set = [], answers = []) => {
   if (!nums.length) answers.push([...set]);
@@ -56,41 +57,24 @@ const permute = (nums, set = [], answers = []) => {
   return answers;
 };
 
-const getMaxSignal = (permutations, program) => {
-  const outputs = [];
-  for (let i = 0; i < permutations.length; i++) {
-    console.log([permutations[i][0], 0]);
-    const a = runTEST2(program, [permutations[i][0], 0]);
-    console.log([permutations[i][1], a]);
-    const b = runTEST2(program, [permutations[i][0], a]);
-    const c = runTEST2(program, [permutations[i][0], b]);
-    const d = runTEST2(program, [permutations[i][0], c]);
-    const e = runTEST2(program, [permutations[i][0], d]);
-    outputs.push(e);
+const getMaxSignal = (program, phases) => {
+  let maxSignal = 0;
+
+  for (let i = 0; i < phases.length; i++) {
+    const ampA = Intcode([...program], [phases[i][0], 0]);
+    const ampB = Intcode([...program], [phases[i][1], ampA]);
+    const ampC = Intcode([...program], [phases[i][2], ampB]);
+    const ampD = Intcode([...program], [phases[i][3], ampC]);
+    const ampE = Intcode([...program], [phases[i][4], ampD]);
+
+    if (ampE > maxSignal) {
+      maxSignal = ampE;
+    }
   }
-  return outputs;
+  return maxSignal;
 };
 
-const testInput = [
-  3,
-  15,
-  3,
-  16,
-  1002,
-  16,
-  10,
-  16,
-  1,
-  16,
-  15,
-  15,
-  4,
-  15,
-  99,
-  0,
-  0
-];
+module.exports = { permute, getMaxSignal };
 
 const permutations = permute([0, 1, 2, 3, 4]);
-console.log(getMaxSignal(permutations, testInput));
-module.exports = { permute, getMaxSignal };
+console.log(getMaxSignal(inputs, permutations)); // 21860
