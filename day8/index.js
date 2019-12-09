@@ -33,7 +33,7 @@ const getLayers = (image, width, height) => {
   return layers;
 };
 
-const spaceImageEncoder = (image, width, height) => {
+const spaceImageEncoder = (image, width, height = 1) => {
   const layers = getLayers(image, width, height);
 
   const counts = layers.map(layer => {
@@ -83,33 +83,25 @@ So, the final image looks like this:
 10
 What message is produced after decoding your image?
 */
-const colors = {
-  black: 0,
-  white: 1,
-  transparent: 2
-};
 
 const spaceImageDecoder = (image, width, height) => {
   const layers = getLayers(image, width, height);
+  const pixels = [];
+  for (let i = 0; i < width * height; i++) {
+    pixels.push(layers.map(layer => layer[i]));
+  }
 
-  const pixels = layers.map((layer, index) => {
-    return layer.map(pixel => pixel[index]);
+  const finalImage = pixels.map(pixel => {
+    for (let i = 0; i < pixel.length; i++) {
+      if (pixel[i] !== 2) {
+        return pixel[i];
+      }
+    }
   });
 
-  console.log(pixels[0].length);
-  const finalImage = pixels
-    .map(pixel => {
-      for (let i = 0; i < pixel.length; i++) {
-        if (pixel[i] !== 2) {
-          return pixel[i];
-        }
-      }
-    })
-    .join("");
-
-  console.log(finalImage.length);
-  return finalImage;
+  return finalImage.join("");
 };
 
-//inputs = [0, 2, 2, 2, 1, 1, 2, 2, 2, 2, 1, 2, 0, 0, 0, 0];
-console.log(spaceImageDecoder(inputs, 25, 6));
+const img = spaceImageDecoder(inputs, 25, 6);
+
+console.log(img.length);

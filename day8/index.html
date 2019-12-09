@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <style>
+    body {
+      display: grid;
+      grid-template-columns: repeat(25, 10px);
+      grid-template-rows: repeat(6, 10px);
+
+    }
+
+    div {
+      width: 10px;
+      height: 10px;
+    }
+
+    .white {
+      background: white;
+    }
+
+    .black {
+      background: black;
+    }
+  </style>
+</head>
+
+<body>
+  <script>
+    const img = '100100110011100011001111010010100101001010010100001111010000111001000011100100101011010010100001000010010100101001010010100001001001110111000110010000'
+
+    function draw(image) {
+      image.split('').forEach(pixel => {
+        console.log(pixel)
+        const p = document.createElement("div");
+        if (pixel == 1) {
+          p.className = "white"
+        } else {
+          p.className = "black"
+        }
+        document.body.appendChild(p);
+      })
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+      draw(img);
+    });
+
+  </script>
+</body>
+
+</html>
