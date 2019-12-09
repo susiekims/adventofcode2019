@@ -7,14 +7,16 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Document</title>
   <style>
-    body {
+    .grid {
       display: grid;
-      grid-template-columns: repeat(25, 10px);
-      grid-template-rows: repeat(6, 10px);
-
+      grid-template-columns: repeat(25, 1fr);
+      grid-template-rows: repeat(6, 1fr);
+      width: 250px;
+      height: 60px;
+      border: 1px solid black;
     }
 
-    div {
+    .grid div {
       width: 10px;
       height: 10px;
     }
@@ -30,6 +32,7 @@
 </head>
 
 <body>
+  <div class="grid"></div>
   <script>
     const img = '100100110011100011001111010010100101001010010100001111010000111001000011100100101011010010100001000010010100101001010010100001001001110111000110010000'
 
@@ -42,7 +45,7 @@
         } else {
           p.className = "black"
         }
-        document.body.appendChild(p);
+        document.querySelector('.grid').appendChild(p);
       })
     }
 
