@@ -32,20 +32,6 @@ D)I
 E)J
 J)K
 K)L
-
-B: ["COM"],
-C: ["B", "COM"],
-D: ["C", "B", "COM"],
-E: ["D", "C", "B", "COM"],
-F: ["E", "D", "C", "B", "COM"],
-G: ["B", "COM"],
-H: ["G", "B", "COM"],
-I: ["D", "C", "B", "COM"],
-J: ["E", "D", "C", "B", "COM"],
-K: ["J", "E", "D", "C", "B", "COM"],
-L: ["K", "J", "E", "D", "C", "B", "COM"]
-
-
 Visually, the above map of orbits looks like this:
 
         G - H       J - K - L
@@ -67,49 +53,48 @@ What is the total number of direct and indirect orbits in your map data?
 
 const getInputs = require("../helpers/getInputs");
 
-const inputs = getInputs("./input.txt", "\n").map(input => input.split(")"));
+const inputs = getInputs("./input.txt", "\n").map(orbit => orbit.split(")"));
 
-const createMap = orbits => {
-  return orbits.reduce((acc, curr) => {
-    if (acc[curr[0]]) {
-      acc[curr[0]] = [...acc[curr[0]], curr[1]];
-    } else {
-      acc[curr[0]] = [curr[1]];
-    }
-    return acc;
-  }, {});
+const getTotalCount = counts => {
+  return Object.values(counts).reduce((acc, curr) => acc.concat(curr)).length;
 };
 
 const countOrbits = orbits => {
-  let orbitsCount = 0;
-  let start = "COM";
+  const map = orbits.reduce((accum, curr) => {
+    accum[curr[0]] = curr[1];
+    return accum;
+  }, {});
 
-  const map = createMap(orbits);
+  let count = 0;
 
-  const countNodes = (node, level) => {
-    orbitsCount += level;
-    let children = map[node];
+ orbits.forEach(object => {
+    let object = orbits[i][1];
+    Object.values(map).forEach(pair => {
+      object === pair[0] ? 
+    })
+  })
 
-    if (children) {
-      children.forEach(child => countNodes(child, level + 1));
-    }
-  };
-  countNodes(start, 0);
+  return count;
+}
 
-  return orbitsCount;
-};
+const test = [
+  "COM)B",
+  "B)C",
+  "C)D",
+  "D)E",
+  "E)F",
+  "B)G",
+  "G)H",
+  "D)I",
+  "E)J",
+  "J)K",
+  "K)L"
+].map(orbit => orbit.split(")"));
 
-console.log(countOrbits(inputs)); // 261306
+console.log(countOrbits(test));
+module.exports = countOrbits;
 
 /*
-
---- Part Two ---
-Now, you just need to figure out how many orbital transfers you (YOU) need to take to get to Santa (SAN).
-
-You start at the object YOU are orbiting; your destination is the object SAN is orbiting. An orbital transfer lets you move from any object to an object orbiting or orbited by that object.
-
-For example, suppose you have the following map:
-
 COM)B
 B)C
 C)D
@@ -121,90 +106,4 @@ D)I
 E)J
 J)K
 K)L
-K)YOU
-I)SAN
-Visually, the above map of orbits looks like this:
-
-                          YOU
-                         /
-        G - H       J - K - L
-       /           /
-COM - B - C - D - E - F
-               \
-                I - SAN
-In this example, YOU are in orbit around K, and SAN is in orbit around I. To move from K to I, a minimum of 4 orbital transfers are required:
-
-K to J
-J to E
-E to D
-D to I
-Afterward, the map of orbits looks like this:
-
-        G - H       J - K - L
-       /           /
-COM - B - C - D - E - F
-               \
-                I - SAN
-                 \
-                  YOU
-What is the minimum number of orbital transfers required to move from the object YOU are orbiting to the object SAN is orbiting? (Between the objects they are orbiting - not between YOU and SAN.)
-
 */
-
-const getShortestTransfers = input => {
-  const myParent = input.filter(input => input[1] === "YOU")[0][0];
-  const santasParent = input.filter(input => input[1] === "SAN")[0][0];
-
-  const map = createMap(input);
-  const tree = Object.entries(map).reduce((tree, node) => {
-    return Object.assign(
-      tree,
-      {
-        [node[0]]: {
-          value: node[0],
-          left: node[1][0],
-          right: node[1][1]
-        }
-      },
-      {}
-    );
-  }, {});
-
-  const lca = getlca(tree, "COM", myParent, santasParent);
-
-  return (
-    getLevelOfNode(tree, lca, myParent, 0) +
-    getLevelOfNode(tree, lca, santasParent, 0)
-  );
-};
-
-const getlca = (tree, root, n1, n2) => {
-  if (!tree[root]) return null;
-
-  if (tree[root].value === n1 || tree[root].value == n2)
-    return tree[root].value;
-
-  const leftlca = getlca(tree, tree[root].left, n1, n2);
-  const rightlca = getlca(tree, tree[root].right, n1, n2);
-
-  if (leftlca && rightlca) return tree[root].value;
-
-  return leftlca ? leftlca : rightlca;
-};
-
-const getLevelOfNode = (tree, root, key, level) => {
-  if (!tree[root]) return -1;
-
-  if (tree[root].value == key) return level;
-
-  const l = getLevelOfNode(tree, tree[root].left, key, level + 1);
-  if (l !== -1) return l;
-
-  return getLevelOfNode(tree, tree[root].right, key, level + 1);
-};
-
-console.log(getShortestTransfers(inputs)); // 382
-
-// Disclaimer: I am not familiar with working with trees so I had a lot of trouble with these problems. This tutorial https://www.youtube.com/watch?v=Ev83cGBsQSA was very helpful, and I learned a lot about binary trees!
-
-module.exports = { countOrbits, getShortestTransfers };
