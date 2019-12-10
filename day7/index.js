@@ -164,4 +164,5 @@ let test = [
   0,
   5
 ];
-console.log(amplifierFeedbackLoop(test, permutations));
+
+console.log(amplifierFeedbackLoop(inputs, permute([5, 6, 7, 8, 9])));

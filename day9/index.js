@@ -39,113 +39,101 @@ Once your Intcode computer is fully functional, the BOOST program should report 
 
 const getInputs = require("../helpers/getInputs");
 
-const inputs = getInputs("./input.txt", ",").map(Number);
+let inputs = getInputs("./input.txt", ",").map(Number);
 
-const getOpcode = number => (number === 99 ? 99 : number % 10);
+class Intcode {
+  data;
+  relativeBase = 0;
+  input;
+  output;
 
-const getModes = number => {
-  const modes = Math.floor(number / 100)
-    .toString()
-    .split("")
-    .map(Number)
-    .reverse();
-
-  if (modes.length < 3) {
-    modes.push(0);
+  constructor(data, input = []) {
+    this.data = data;
+    this.input = input;
   }
 
-  return modes;
-};
-
-const modes = {
-  position: 0,
-  immediate: 1,
-  relative: 2
-};
-
-const getValueFromMode = (program, mode) => {
-  const { position, immediate, relative } = modes;
-  if (mode === position) {
-    program[program[i + 1]];
+  getValue(val) {
+    return this.data[val] == undefined ? 0 : this.data[val];
   }
 
-  if (mode === immediate) {
-    program[i + 1];
-  }
-};
-
-const Intcode = (program, input = []) => {
-  let i = 0;
-  let relativeBase = 0;
-  while (i < program.length) {
-    const opcode = getOpcode(program[i]);
-    const modes = getModes(program[i]);
-    const param = program[i + 1];
-    const val3 = program[i + 3];
-
-    let val1, val2;
-
-    if (modes[0] === 0) {
-      val1 = program[program[i + 1]];
-    }
-
-    if (modes[0] === 1) {
-      val1 = program[i + 1];
-    }
-
-    if (modes[1] === 0) {
-      val2 = program[program[i + 2]];
-    }
-
-    if (modes[1] === 1) {
-      val2 = program[i + 2];
-    }
-
-    if (modes[0] === 2) {
-      val1 = program[relativeBase + program[i + 1]] + relativeBase;
-    }
-
-    switch (opcode) {
+  getIndex(mode, i) {
+    switch (mode) {
+      case 0:
+        return this.data[i];
       case 1:
-        program[val3] = val1 + val2;
-        i += 4;
-        break;
+        return i;
       case 2:
-        program[val3] = val1 * val2;
-        i += 4;
-        break;
-      case 3:
-        program[param] = input.shift();
-        i += 2;
-        break;
-      case 4:
-        program[0] = val1;
-        i += 2;
-        break;
-      case 5:
-        i = val1 !== 0 ? val2 : i + 3;
-        break;
-      case 6:
-        i = val1 === 0 ? val2 : i + 3;
-        break;
-      case 7:
-        program[val3] = val1 < val2 ? 1 : 0;
-        i += 4;
-        break;
-      case 8:
-        program[val3] = val1 === val2 ? 1 : 0;
-        i += 4;
-        break;
-      case 9:
-        relativeBase += param;
-        i += 2;
-        break;
-      default:
-        return program[0];
+        return this.relativeBase + this.data[i];
     }
   }
 
-  return program[0];
-};
+  run() {
+    for (let i = 0; i < this.data.length; i++) {
+      let opcode = this.data[i].toString().split("");
+      let instruction =
+        opcode.length == 1
+          ? parseInt(opcode[opcode.length - 1])
+          : parseInt(opcode[opcode.length - 2] + opcode[opcode.length - 1]);
+      if (instruction == 99) {
+        i = this.data.length;
+        return this.output;
+      }
+      let modeFirst = opcode[opcode.length - 3]
+        ? parseInt(opcode[opcode.length - 3])
+        : 0;
+      let modeSecond = opcode[opcode.length - 4]
+        ? parseInt(opcode[opcode.length - 4])
+        : 0;
+      let modeThird = opcode[opcode.length - 5]
+        ? parseInt(opcode[opcode.length - 5])
+        : 0;
+      let a = this.getIndex(modeFirst, i + 1);
+      let b = this.getIndex(modeSecond, i + 2);
+      let c = this.getIndex(modeThird, i + 3);
+      switch (instruction) {
+        case 1:
+          this.data[c] = this.getValue(a) + this.getValue(b);
+          i += 3;
+          break;
+        case 2:
+          this.data[c] = this.getValue(a) * this.getValue(b);
+          i += 3;
+          break;
+        case 3:
+          this.data[a] = this.input.shift();
+          i += 1;
+          break;
+        case 4:
+          this.output = this.data[a];
+          i += 1;
+          break;
+        case 5:
+          this.getValue(a) != 0 ? (i = this.getValue(b) - 1) : (i += 2);
+          break;
+        case 6:
+          this.getValue(a) == 0 ? (i = this.getValue(b) - 1) : (i += 2);
+          break;
+        case 7:
+          this.getValue(a) < this.getValue(b)
+            ? (this.data[c] = 1)
+            : (this.data[c] = 0);
+          i += 3;
+          break;
+        case 8:
+          this.getValue(a) == this.getValue(b)
+            ? (this.data[c] = 1)
+            : (this.data[c] = 0);
+          i += 3;
+          break;
+        case 9:
+          this.relativeBase += this.getValue(a);
+          i += 1;
+          break;
+      }
+    }
+    return this.output;
+  }
+}
 
-module.exports = Intcode;
+const test = new Intcode(inputs, [5]);
+console.log(test.run());

@@ -185,6 +185,10 @@ const Intcode = (program, input = []) => {
         i += 4;
         break;
       case 3:
+        if (!input.length) {
+          console.error("need more inputs");
+          return program[0];
+        }
         program[param] = input.shift();
         i += 2;
         break;
