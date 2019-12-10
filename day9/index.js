@@ -126,3 +126,5 @@ console.log(Intcode(inputs, [1]));
 console.log(Intcode(inputs, [2]));
 
 module.exports = Intcode;
+
+// I had a lot of trouble with comprehending the instructions (as I usually do for the Intcode problems). I found https://github.com/agardes/AoC-2019/blob/master/day09.js was very helpful to refactor my computer to work correctly.
