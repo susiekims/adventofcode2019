@@ -1,4 +1,4 @@
-/* 
+/*
 
 --- Day 9: Sensor Boost ---
 You've just said goodbye to the rebooted rover and left Mars when you receive a faint distress signal coming from the asteroid belt. It must be the Ceres monitoring station!
@@ -35,105 +35,94 @@ The BOOST program will ask for a single input; run it in test mode by providing 
 
 Once your Intcode computer is fully functional, the BOOST program should report no malfunctioning opcodes when run in test mode; it should only output a single value, the BOOST keycode. What BOOST keycode does it produce?
 
+Your puzzle answer was 2932210790
+
 */
 
 const getInputs = require("../helpers/getInputs");
 
 let inputs = getInputs("./input.txt", ",").map(Number);
 
-class Intcode {
-  data;
-  relativeBase = 0;
-  input;
-  output;
+const Intcode = (program, inputs = []) => {
+  let relativeBase = 0;
+  let outputs = [];
 
-  constructor(data, input = []) {
-    this.data = data;
-    this.input = input;
-  }
+  const getValue = value => (program[value] == undefined ? 0 : program[value]);
 
-  getValue(val) {
-    return this.data[val] == undefined ? 0 : this.data[val];
-  }
-
-  getIndex(mode, i) {
+  const getPosition = (mode, value) => {
     switch (mode) {
       case 0:
-        return this.data[i];
+        return program[value];
       case 1:
-        return i;
+        return value;
       case 2:
-        return this.relativeBase + this.data[i];
+        return relativeBase + program[value];
+    }
+  };
+
+  const getOpcode = number => (number === 99 ? 99 : number % 10);
+  const getMode = (instruction, position) =>
+    instruction[instruction.length - position]
+      ? parseInt(instruction[instruction.length - position])
+      : 0;
+
+  for (let i = 0; i < program.length; i++) {
+    const instruction = program[i].toString().split("");
+    const opcode = getOpcode(program[i]);
+    const mode1 = getMode(instruction, 3);
+    const mode2 = getMode(instruction, 4);
+    const mode3 = getMode(instruction, 5);
+    const param1 = getPosition(mode1, i + 1);
+    const param2 = getPosition(mode2, i + 2);
+    const param3 = getPosition(mode3, i + 3);
+
+    switch (opcode) {
+      case 1:
+        program[param3] = getValue(param1) + getValue(param2);
+        i += 3;
+        break;
+      case 2:
+        program[param3] = getValue(param1) * getValue(param2);
+        i += 3;
+        break;
+      case 3:
+        program[param3] = inputs.shift();
+        i += 1;
+        break;
+      case 4:
+        outputs.push(program[param1]);
+        i += 1;
+        break;
+      case 5:
+        i = getValue(param1) != 0 ? getValue(param2) - 1 : i + 2;
+        break;
+      case 6:
+        i = getValue(param1) == 0 ? getValue(param2) - 1 : i + 2;
+        break;
+      case 7:
+        program[param3] = getValue(param1) < getValue(param2) ? 1 : 0;
+        i += 3;
+        break;
+      case 8:
+        program[param3] = getValue(param1) == getValue(param2) ? 1 : 0;
+        i += 3;
+        break;
+      case 9:
+        relativeBase += getValue(param1);
+        i += 1;
+        break;
+      case 99:
+        console.log("end of program");
+        return outputs;
+      default:
+        console.error("invalid opcode");
+        return outputs;
     }
   }
+  return output;
+};
 
-  run() {
-    for (let i = 0; i < this.data.length; i++) {
-      let opcode = this.data[i].toString().split("");
-      let instruction =
-        opcode.length == 1
-          ? parseInt(opcode[opcode.length - 1])
-          : parseInt(opcode[opcode.length - 2] + opcode[opcode.length - 1]);
-      if (instruction == 99) {
-        i = this.data.length;
-        return this.output;
-      }
-      let modeFirst = opcode[opcode.length - 3]
-        ? parseInt(opcode[opcode.length - 3])
-        : 0;
-      let modeSecond = opcode[opcode.length - 4]
-        ? parseInt(opcode[opcode.length - 4])
-        : 0;
-      let modeThird = opcode[opcode.length - 5]
-        ? parseInt(opcode[opcode.length - 5])
-        : 0;
-      let a = this.getIndex(modeFirst, i + 1);
-      let b = this.getIndex(modeSecond, i + 2);
-      let c = this.getIndex(modeThird, i + 3);
-      switch (instruction) {
-        case 1:
-          this.data[c] = this.getValue(a) + this.getValue(b);
-          i += 3;
-          break;
-        case 2:
-          this.data[c] = this.getValue(a) * this.getValue(b);
-          i += 3;
-          break;
-        case 3:
-          this.data[a] = this.input.shift();
-          i += 1;
-          break;
-        case 4:
-          this.output = this.data[a];
-          i += 1;
-          break;
-        case 5:
-          this.getValue(a) != 0 ? (i = this.getValue(b) - 1) : (i += 2);
-          break;
-        case 6:
-          this.getValue(a) == 0 ? (i = this.getValue(b) - 1) : (i += 2);
-          break;
-        case 7:
-          this.getValue(a) < this.getValue(b)
-            ? (this.data[c] = 1)
-            : (this.data[c] = 0);
-          i += 3;
-          break;
-        case 8:
-          this.getValue(a) == this.getValue(b)
-            ? (this.data[c] = 1)
-            : (this.data[c] = 0);
-          i += 3;
-          break;
-        case 9:
-          this.relativeBase += this.getValue(a);
-          i += 1;
-          break;
-      }
-    }
-    return this.output;
-  }
-}
+console.log(Intcode(inputs, [1]));
+console.log(Intcode(inputs, [2]));
 
-const test = new Intcode(inputs, [5]);
-console.log(test.run());
+module.exports = Intcode;

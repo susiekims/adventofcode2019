@@ -56,15 +56,14 @@ const inputs = getInputs("./input.txt", ",").map(Number);
 const getOpcode = number => (number === 99 ? 99 : number % 10);
 
 const getModes = number => {
-  const modes = Math.floor(number / 100)
+  const modes = number
     .toString()
     .split("")
     .map(Number)
     .reverse();
 
-  if (modes.length < 3) {
-    modes.push(0);
-  }
+  if (modes.length === 1) modes.concat([0, 0]);
+  if (modes.length === 2) modes.push(0);
 
   return modes;
 };
