@@ -67,6 +67,7 @@ const Intcode = (program, inputs = []) => {
       : 0;
 
   for (let i = 0; i < program.length; i++) {
+    if (!program[i]) return;
     const instruction = program[i].toString().split("");
     const opcode = getOpcode(program[i]);
     const mode1 = getMode(instruction, 3);
@@ -74,7 +75,7 @@ const Intcode = (program, inputs = []) => {
     const mode3 = getMode(instruction, 5);
     const param1 = getPosition(mode1, i + 1);
     const param2 = getPosition(mode2, i + 2);
-    const param3 = getPosition(mode3, i + 3);
+    const param3 = program[i + 1];
 
     switch (opcode) {
       case 1:
@@ -119,11 +120,11 @@ const Intcode = (program, inputs = []) => {
         return outputs;
     }
   }
-  return output;
+  return outputs;
 };
 
-console.log(Intcode(inputs, [1]));
-console.log(Intcode(inputs, [2]));
+// console.log(Intcode(inputs, [1]));
+// console.log(Intcode(inputs, [2]));
 
 module.exports = Intcode;
 
